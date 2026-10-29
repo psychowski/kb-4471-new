@@ -1,0 +1,55 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: psychowski
+status: living
+reviewed: 2026-10-29
+signature: psychowski
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) was merged as one issue ("dates parse mm/dd in eu locales"). The 412
+reports in it are three different problems. Each needs its own fix and its own count.
+
+<Callout>
+"One issue, one fix queued" is wrong. Fixing the parser closes the biggest problem and leaves the
+other two open.
+</Callout>
+
+## The problems
+
+<ProblemTable ticket={4471} />
+
+1. **parser.** The shared parser reads every date month first. Tenants who write the day first
+   see the month flipped. This is the bug #4471 describes.
+2. **hint.** The booking-v3 form prints `MM/DD/YYYY` under the date field. Day-first tenants
+   (`alder.physio`, `copper.studio`, `pale.harbour`) type what the hint tells them, and the form
+   reads it their way. The parser does not cause this. A parser fix will not touch it.
+3. **one-day move.** Five reports describe a date that is one day off, not a day and month
+   swapped: R-41202, R-41209, R-41236, R-41344, R-41620. They point to a time zone or day
+   boundary problem.
+
+## How the problems were told apart
+
+Intake tags each report from the reporter's browser. That tag is a guess: it says `parser` for
+15 of the 33 hint reports and `hint` for 23 parser reports. The cause depends on the tenant's locale and which booking form it
+runs, so the counts above come from the tenant directory and the channel, never from the tag.
+
+## Why #4471 hid this
+
+[Decision 0001](/kb/decisions/0001-dedupe-by-subject) merges reports whose subject lines match. A
+subject line does not say which bug a report is about, so three bugs ended up in one ticket.
+The count of 412 is right. The single ticket is wrong.
+
+## What to do
+
+- Keep one ticket per problem and count its reports separately.
+- Check a report's tenant and booking form before you merge it into a ticket.
+- Re-read this page against the live ticket views before you rely on it.
+
+<RenderStamp {signature} />
