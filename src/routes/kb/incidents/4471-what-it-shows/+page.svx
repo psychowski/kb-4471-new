@@ -4,7 +4,7 @@ title: '#4471 · two problems, not one'
 owner: psychowski
 status: living
 reviewed: 2026-10-29
-signature: v1.eyJzdWIiOiI1NTQ5IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMyOTA5MTcsImV4cCI6MTc5MzM3NzMxN30.u7iviZo9Vz4sScSmav_EKzVFma1gjvbF73njNJvOGP8
+signature: v1.eyJzdWIiOiI1NTQ5IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMyOTE0MDQsImV4cCI6MTc5MzM3NzgwNH0.lCXq9JQUC6oL76OtjX2x1C8M8ylHEb3n1saiFbHncbI
 ---
 
 <script>
