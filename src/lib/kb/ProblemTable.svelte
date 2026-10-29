@@ -1,13 +1,22 @@
 <script lang="ts">
   import reports from '#lib/data/reports-4471.json';
   import notes from '#lib/data/desk-notes.json';
-  import { groupByCause, readAs, uniqueById, type Report } from '#lib/kb/causes';
+  import { groupByCause, uniqueById, type Report } from '#lib/kb/causes';
   import { tenantOf } from '#lib/kb/locales';
 
   let { ticket }: { ticket: number } = $props();
 
   const merged = $derived(uniqueById(reports as Report[]).filter((r) => r.mergedInto === ticket));
-  const groups = $derived(groupByCause(merged, tenantOf));
+  const moved = $derived(merged.filter((r) => notes.oneDayMove.includes(r.id)));
+  const rest = $derived(merged.filter((r) => !notes.oneDayMove.includes(r.id)));
+  const span = (rs: Report[]) => {
+    const days = rs.map((r) => r.receivedAt.slice(0, 10)).sort();
+    return { firstSeen: days[0], lastSeen: days[days.length - 1], tenants: new Set(rs.map((r) => r.tenant)).size };
+  };
+  const groups = $derived([
+    ...groupByCause(rest, tenantOf).map((g) => ({ cause: g.cause as string, reports: g.reports, ...span(g.reports) })),
+    ...(moved.length ? [{ cause: 'one-day', reports: moved, ...span(moved) }] : []),
+  ]);
   const total = $derived(groups.reduce((n, g) => n + g.reports.length, 0));
 </script>
 
@@ -24,14 +33,6 @@
   </tbody>
 </table>
 
-{#each groups as g (g.cause)}
-  {@const moved = readAs(g, notes.oneDayMove)}
-  {#if moved}
-    <p class="note">{moved} of the {g.reports.length} <code>{g.cause}</code> reports read as a one-day move. They are filed and counted under <code>{g.cause}</code> by tenant.</p>
-  {/if}
-{/each}
-
 <style>
   .sum { font-size: 1.1rem; }
-  .note { color: var(--muted); font-size: 0.85em; }
 </style>
